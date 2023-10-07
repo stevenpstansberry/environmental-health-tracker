@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MongoDB</title>
+</head>
+<body>
+    <h1>Data</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Temperature</th>
+            <th>Pressure</th>
+            <th>Humidity</th>
+        </tr>
+        {% for item in data %}
+            <tr>
+                <td>{{ item['_id'] }}</td>
+                <td>{{ item['temp'] }}</td>
+                <td>{{ item['pressure'] }}</td>
+                <td>{{ item['humidity'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
