@@ -1,0 +1,6 @@
+to run, install these in terminal:
+
+pip install flask
+pip install flask-pymongo
+pip install python-dotenv
+pip install flask-login
