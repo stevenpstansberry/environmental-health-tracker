@@ -1,0 +1,22 @@
+{ 
+  "_id": 0,
+    "mappings": {
+      "_doc": {
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "sensors": {
+            "properties": {
+              "humidity": {
+                "type": "float"
+              },
+              "temperature": {
+                "type": "float"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
