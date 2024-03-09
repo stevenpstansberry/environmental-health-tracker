@@ -3,7 +3,6 @@ from flask import Blueprint, Flask, jsonify, render_template
 from website.mongo import db
 
 views = Blueprint('views', __name__, static_folder='static')
-# views = Flask('views', __name__,  static_folder='static/')
 
 @views.route('/')
 def home():
@@ -24,6 +23,7 @@ def table():
         print(result)
 
     return render_template('data_table.html', data=data)
+
 
 @views.route('dashboard/')
 def dashboard():

@@ -14,7 +14,7 @@
 
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
 
-	<title>AdminKit Demo - Bootstrap 5 Admin Template</title>
+	<title>Eco Health Tracker</title>
 
 	<link href="../static/css/app.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
 		<nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
 				<a class="sidebar-brand" href="index.html">
-          <span class="align-middle">AdminKit</span>
+          <span class="align-middle">Eco Health Tracker</span>
         </a>
 
 				<ul class="sidebar-nav">
@@ -54,7 +54,7 @@
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="pages-sign-up.html">
               <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Sign Up</span>
-            </a>
+            <!-- </a>
 					</li>
 
 					<li class="sidebar-item">
@@ -109,7 +109,7 @@
 
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="maps-google.html">
-              <i class="align-middle" data-feather="map"></i> <span class="align-middle">Maps</span>
+              <i class="align-middle" data-feather="map"></i> <span class="align-middle">Maps</span> -->
             </a>
 					</li>
 				</ul>
@@ -292,19 +292,22 @@
 											<div class="card-body">
 												<div class="row">
 													<div class="col mt-0">
-														<h5 class="card-title">Temperature</h5>
+														<h5 class="card-title">Temperature (&deg;C)</h5>
 													</div>
 
 													<div class="col-auto">
 														<div class="stat text-primary">
-															<i class="align-middle" data-feather="truck"></i>
+															<img
+															src="../static/img/icons/temperature.svg"
+															alt="Temperature"
+															/>
 														</div>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">2.382</h1>
+												<h1 class="mt-1 mb-3">25.8</h1>
 												<div class="mb-0">
-													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
-													<span class="text-muted">Since last week</span>
+													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65 </span>
+													<span class="text-muted">Since last day</span>
 												</div>
 											</div>
 										</div>
@@ -317,14 +320,18 @@
 
 													<div class="col-auto">
 														<div class="stat text-primary">
-															<i class="align-middle" data-feather="users"></i>
+															<img
+															src="../static/img/icons/pressure.svg"
+															alt="Pressure"
+															/>
+															<!-- <i class="align-middle" data-feather="users"></i> -->
 														</div>
 													</div>
 												</div>
 												<h1 class="mt-1 mb-3">14.212</h1>
 												<div class="mb-0">
-													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 5.25% </span>
-													<span class="text-muted">Since last week</span>
+													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 5.25 </span>
+													<span class="text-muted">Since last day</span>
 												</div>
 											</div>
 										</div>
@@ -334,19 +341,23 @@
 											<div class="card-body">
 												<div class="row">
 													<div class="col mt-0">
-														<h5 class="card-title">Humidity</h5>
+														<h5 class="card-title">Humidity (%)</h5>
 													</div>
 
 													<div class="col-auto">
 														<div class="stat text-primary">
-															<i class="align-middle" data-feather="dollar-sign"></i>
+															<img
+															src="../static/img/icons/humidity.svg"
+															alt="Humidity"
+															/>
+															<!-- <i class="align-middle" data-feather="dollar-sign"></i> -->
 														</div>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">21.300</h1>
+												<h1 class="mt-1 mb-3">40.8</h1>
 												<div class="mb-0">
-													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
-													<span class="text-muted">Since last week</span>
+													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65 </span>
+													<span class="text-muted">Since last day</span>
 												</div>
 											</div>
 										</div>
@@ -354,19 +365,23 @@
 											<div class="card-body">
 												<div class="row">
 													<div class="col mt-0">
-														<h5 class="card-title">temp</h5>
+														<h5 class="card-title">Air Quality</h5>
 													</div>
 
 													<div class="col-auto">
 														<div class="stat text-primary">
-															<i class="align-middle" data-feather="shopping-cart"></i>
+															<img
+															src="../static/img/icons/air quality.svg"
+															alt="Air Quality"
+															/>
+															<!-- <i class="align-middle" data-feather="shopping-cart"></i> -->
 														</div>
 													</div>
 												</div>
 												<h1 class="mt-1 mb-3">64</h1>
 												<div class="mb-0">
-													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25% </span>
-													<span class="text-muted">Since last week</span>
+													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25 </span>
+													<span class="text-muted">Since last day</span>
 												</div>
 											</div>
 										</div>
@@ -379,7 +394,7 @@
 							<div class="card flex-fill w-100">
 								<div class="card-header">
 
-									<h5 class="card-title mb-0">Recent Movement</h5>
+									<h5 class="card-title mb-0">Recent Temperature Movement</h5>
 								</div>
 								<div class="card-body py-3">
 									<div class="chart chart-sm">
@@ -554,7 +569,7 @@
 					<div class="row text-muted">
 						<div class="col-6 text-start">
 							<p class="mb-0">
-								<a class="text-muted" href="https://adminkit.io/" target="_blank"><strong>AdminKit</strong></a> &copy;
+								<a class="text-muted" href="https://adminkit.io/" target="_blank"><strong>Eco Health Tracker</strong></a> &copy;
 							</p>
 						</div>
 						<div class="col-6 text-end">
@@ -587,30 +602,21 @@
 			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
 			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
 			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
+
+			// Simulated temp data
+			var temperatureData = [20.6, 22.2, 23.8, 21.6, 25.8, 24.1, 26.2];
+
 			// Line chart
 			new Chart(document.getElementById("chartjs-dashboard-line"), {
 				type: "line",
 				data: {
-					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+					labels: ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"],
 					datasets: [{
-						label: "Sales ($)",
+						label: "Temperature (°C)",
 						fill: true,
 						backgroundColor: gradient,
 						borderColor: window.theme.primary,
-						data: [
-							2115,
-							1562,
-							1584,
-							1892,
-							1587,
-							1923,
-							2566,
-							2448,
-							2805,
-							3438,
-							2917,
-							3327
-						]
+						data: temperatureData
 					}]
 				},
 				options: {
@@ -638,7 +644,7 @@
 						}],
 						yAxes: [{
 							ticks: {
-								stepSize: 1000
+								stepSize: 2
 							},
 							display: true,
 							borderDash: [3, 3],
