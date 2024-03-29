@@ -64,3 +64,8 @@ collection.insert_many(generated_data)
 #     json_data = json.load(file)
 
 # collection.insert_one(json_data)
+
+
+
+# Close the MongoDB connection
+# cluster.close()

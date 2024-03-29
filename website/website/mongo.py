@@ -12,12 +12,13 @@ collection = db["data"]  # table
 cursor = collection.find({})
 
 # Print the data
-print(cursor)
-for document in cursor:
-    print(document)
+# print(list(cursor))
+
+# for document in cursor:
+#     print(document)
 
 
 
 # Close the MongoDB connection
-cluster.close()
+# cluster.close()
 

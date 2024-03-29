@@ -24,7 +24,7 @@
 	<div class="wrapper">
 		<nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
-				<a class="sidebar-brand" href="index.html">
+				<a class="sidebar-brand" href="../dashboard">
           <span class="align-middle">Eco Health Tracker</span>
         </a>
 
@@ -34,7 +34,7 @@
 					</li>
 
 					<li class="sidebar-item active">
-						<a class="sidebar-link" href="index.html">
+						<a class="sidebar-link" href="../dashboard">
               <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
             </a>
 					</li>
@@ -46,13 +46,13 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="pages-sign-in.html">
+						<a class="sidebar-link" href="../sign_in">
               <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">Sign In</span>
             </a>
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="pages-sign-up.html">
+						<a class="sidebar-link" href="../sign_up">
               <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Sign Up</span>
             <!-- </a>
 					</li>
@@ -304,7 +304,7 @@
 														</div>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">25.8</h1>
+												<h1 class="mt-1 mb-3"> {{ sensor_data.temp }} </h1>
 												<div class="mb-0">
 													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65 </span>
 													<span class="text-muted">Since last day</span>
@@ -328,7 +328,7 @@
 														</div>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">14.212</h1>
+												<h1 class="mt-1 mb-3"> {{ sensor_data.press }} </h1>
 												<div class="mb-0">
 													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 5.25 </span>
 													<span class="text-muted">Since last day</span>
@@ -354,7 +354,7 @@
 														</div>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">40.8</h1>
+												<h1 class="mt-1 mb-3"> {{ sensor_data.hum }} </h1>
 												<div class="mb-0">
 													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65 </span>
 													<span class="text-muted">Since last day</span>
@@ -378,7 +378,7 @@
 														</div>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">64</h1>
+												<h1 class="mt-1 mb-3"> {{ sensor_data.qlty }} </h1>
 												<div class="mb-0">
 													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25 </span>
 													<span class="text-muted">Since last day</span>

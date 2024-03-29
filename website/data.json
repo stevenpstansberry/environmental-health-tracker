@@ -13,6 +13,12 @@
               },
               "temperature": {
                 "type": "float"
+              },
+              "pressure": {
+                "type": "float"
+              },
+              "quality": {
+                "type": "float"
               }
             }
           }
