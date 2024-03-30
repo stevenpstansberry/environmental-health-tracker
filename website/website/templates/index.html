@@ -40,6 +40,12 @@
 					</li>
 
 					<li class="sidebar-item">
+						<a class="sidebar-link" href="pages-blank.html">
+  				<i class="align-middle" data-feather="book"></i> <span class="align-middle">Analysis</span>
+			</a>
+					</li>
+
+					<li class="sidebar-item">
 						<a class="sidebar-link" href="pages-profile.html">
               <i class="align-middle" data-feather="user"></i> <span class="align-middle">Profile</span>
             </a>
@@ -55,12 +61,6 @@
 						<a class="sidebar-link" href="../sign_up">
               <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Sign Up</span>
             <!-- </a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="pages-blank.html">
-              <i class="align-middle" data-feather="book"></i> <span class="align-middle">Blank</span>
-            </a>
 					</li>
 
 					<li class="sidebar-header">
@@ -280,12 +280,21 @@
 
 			<main class="content">
 				<div class="container-fluid p-0">
-
-					<h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col p-0">
+								<h1 class="h3 mb-3"><strong>Dashboard</strong></h1>
+							</div>
+							<div class="col-auto">
+								<p class="text-muted mb-0">Last Updated: 3/30/2024 11PM</p>
+							</div>
+						</div>
+					</div>
 
 					<div class="row">
 						<div class="col-xl-6 col-xxl-5 d-flex">
 							<div class="w-100">
+								<h6 class="text-muted mb-3 font-weight-bold" style="font-size: 14px; font-weight: 700;">Hourly Data (Compare to Same Time Last Day)</h6>
 								<div class="row">
 									<div class="col-sm-6">
 										<div class="card">
@@ -393,8 +402,14 @@
 						<div class="col-xl-6 col-xxl-7">
 							<div class="card flex-fill w-100">
 								<div class="card-header">
-
-									<h5 class="card-title mb-0">Recent Temperature Movement</h5>
+									<h5 class="card-title mb-2">Daily Data Movement</h5>
+									<!-- Horizontal button group -->
+									<div class="btn-group btn-group-sm float-right" role="group" aria-label="Data Type">
+										<button type="button" class="btn btn-secondary active" id="temperatureBtn">Temperature</button>
+										<button type="button" class="btn btn-secondary" id="humidityBtn">Humidity</button>
+										<button type="button" class="btn btn-secondary" id="pressureBtn">Pressure</button>
+										<button type="button" class="btn btn-secondary" id="airQualityBtn">Air Quality</button>
+									</div>
 								</div>
 								<div class="card-body py-3">
 									<div class="chart chart-sm">
@@ -444,7 +459,7 @@
 							<div class="card flex-fill w-100">
 								<div class="card-header">
 
-									<h5 class="card-title mb-0">Real-Time</h5>
+									<h5 class="card-title mb-0">Location</h5>
 								</div>
 								<div class="card-body px-4">
 									<div id="world_map" style="height:350px;"></div>
@@ -603,20 +618,27 @@
 			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
 			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
 
-			// Simulated temp data
-			var temperatureData = [20.6, 22.2, 23.8, 21.6, 25.8, 24.1, 26.2];
+			// Simulated data for each chart type
+			var chartData = {
+				temperature: [18.9, 19.0, 19.3, 19.7, 19.9, 20.0, 20.2, 20.5, 20.6, 20.8, 21.0, 21.2, 21.4, 21.6, 21.4, 21.0, 20.5, 20.3, 20.1, 19.8, 19.6, 19.4, 19.2, 19.0],
+				humidity: [60, 65, 70, 68, 72, 75, 80],
+				pressure: [1010, 1005, 1002, 1012, 1008, 1007, 1015],
+				airQuality: [80, 75, 70, 65, 60, 55, 50]
+			};
 
-			// Line chart
-			new Chart(document.getElementById("chartjs-dashboard-line"), {
+			var chartLabels = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM"];
+
+			// Line chart (default to temperature chart)
+			var lineChart = new Chart(ctx, {
 				type: "line",
 				data: {
-					labels: ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"],
+					labels: chartLabels,
 					datasets: [{
 						label: "Temperature (°C)",
 						fill: true,
 						backgroundColor: gradient,
 						borderColor: window.theme.primary,
-						data: temperatureData
+						data: chartData.temperature
 					}]
 				},
 				options: {
@@ -655,6 +677,46 @@
 					}
 				}
 			});
+
+			// Event listeners for chart type buttons
+			document.getElementById("temperatureBtn").addEventListener("click", function() {
+				updateChart("temperature", "Temperature (°C)");
+				toggleActiveButton("temperatureBtn");
+			});
+
+			document.getElementById("humidityBtn").addEventListener("click", function() {
+				updateChart("humidity", "Humidity (%)");
+				toggleActiveButton("humidityBtn");
+			});
+
+			document.getElementById("pressureBtn").addEventListener("click", function() {
+				updateChart("pressure", "Pressure (hPa)");
+				toggleActiveButton("pressureBtn");
+			});
+
+			document.getElementById("airQualityBtn").addEventListener("click", function() {
+				updateChart("airQuality", "Air Quality");
+				toggleActiveButton("airQualityBtn");
+			});
+
+			// Function to update chart data
+			function updateChart(dataType, label) {
+				lineChart.data.datasets[0].label = label;
+				lineChart.data.datasets[0].data = chartData[dataType];
+				lineChart.update();
+			}
+
+			// Function to toggle active button
+			function toggleActiveButton(btnId) {
+				var buttons = document.querySelectorAll(".btn-group button");
+				buttons.forEach(function(btn) {
+					if (btn.id === btnId) {
+						btn.classList.add("active");
+					} else {
+						btn.classList.remove("active");
+					}
+				});
+			}
 		});
 	</script>
 	<script>
