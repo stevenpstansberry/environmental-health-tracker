@@ -1,13 +1,24 @@
 import RPi.GPIO as GPIO
 import time
 import json
+import threading
+from datetime import datetime, timedelta
 from DHT_sensor import read_dht_sensor
 from BME280_sensor import read_bme_sensor
+
 
 # Set lED to GPIO 18
 LED_PIN = 18  
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED_PIN, GPIO.OUT)
+
+def blink_led():
+    """Function to blink the LED every second."""
+    while True:
+        GPIO.output(LED_PIN, GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(LED_PIN, GPIO.LOW)
+        time.sleep(0.5)
 
 
 # Function to store data locally
@@ -39,6 +50,12 @@ def store_data_locally(data, sensor_name, filename='sensor_data.json'):
         json.dump(file_data, file, indent=4)       
 
 if __name__ == '__main__':
+	 # Start the LED blinking in a separate thread
+    led_thread = threading.Thread(target=blink_led)
+    led_thread.daemon = True
+    led_thread.start()
+    
+    
     try:
         while True:
             # Read sensor data
@@ -63,12 +80,13 @@ if __name__ == '__main__':
                 #TODO implement upload to mongoDB
                 #upload_to_mongo(dht_sensor_data)
 
-
-            # Blink LED to indicate operation
-            GPIO.output(LED_PIN, GPIO.HIGH)
-            time.sleep(0.5)
-            GPIO.output(LED_PIN, GPIO.LOW)
-            time.sleep(0.5)
+            
+            # Calculate and print the time for the next reading
+            next_reading_time = datetime.now() + timedelta(minutes=10)
+            print(f"Next reading will occur at: {next_reading_time.strftime('%Y-%m-%d %H:%M:%S')}")
+            
+            # Wait for 10 minutes before next iteration
+            time.sleep(600) 
             
     # Control C to terminate
     except KeyboardInterrupt:
