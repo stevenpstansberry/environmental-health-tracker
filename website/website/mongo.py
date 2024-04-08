@@ -5,7 +5,7 @@ import os
 
 
 cluster = MongoClient("mongodb+srv://Viewer:1234@sensordata.1v3p4ie.mongodb.net/?retryWrites=true&w=majority")
-db = cluster["test"]  # space in cloud
+db = cluster["sensor_data"]  # space in cloud
 collection = db["data"]  # table
 
 

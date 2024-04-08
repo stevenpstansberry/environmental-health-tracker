@@ -1,6 +1,7 @@
 from flask import Blueprint, Flask, jsonify, render_template
 from bson import json_util
 from website.mongo import db
+import website.calc_data as calc_data
 
 views = Blueprint('views', __name__, static_folder='static')
 
@@ -38,10 +39,21 @@ def get_data():
 
 @views.route('/dashboard')
 def dashboard():
-    sensor_data = {"temp": 25.8, "press": 14.21, "hum": 40.8, "qlty": 64}
+    temp = 25.8
+    press = 14.21
+    hum = 40.8
+    qlty = 64
+    data = {"timestamp": "2024-04-05 01:07:54", "temp": temp, "press": press, "hum": hum, "qlty": qlty}
+    data['dew_point_temp'] = calc_data.dew_point_calc(temp, hum)
+    data['heat_index_temp'] = calc_data.calculate_heat_index(temp, hum)
 
-    return render_template('index.html', title="Eco_Health_Tracker", sensor_data=sensor_data)
+    return render_template('index.html', title="Eco_Health_Tracker", data=data)
 
+
+@views.route('/analysis')
+def analysis():
+
+    return render_template('analysis.html', title="Analysis")
 
 @views.route('/sign_in')
 def sign_in():
