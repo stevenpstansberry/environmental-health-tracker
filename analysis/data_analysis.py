@@ -46,3 +46,6 @@ print("-------------------------------------------------------")
 calculate_statistics("humidity", "daily")
 calculate_statistics("humidity", "weekly")
 calculate_statistics("humidity", "monthly")
+
+
+client.close()
