@@ -2,11 +2,14 @@ import pymongo
 from datetime import datetime
 from statistics import mean
 
+#connect the MongoDB
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 
+#select the database and collections
 db = client["sensor_data"]
 collection = db["data"]
 
+#Define time range based on time interval
 def calculate_statistics(field_name, interval, sensor_type):
     if interval == "daily":
         start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -21,12 +24,15 @@ def calculate_statistics(field_name, interval, sensor_type):
         else:
             end_date = start_date.replace(month=start_date.month + 1)
     
+    #query MongoDB to files within a specified time range
     query = {
         f"{sensor_type}.timestamp": {"$gte": start_date, "$lt": end_date},
         f"{sensor_type}.{field_name}": {"$exists": True}
     }
     documents = collection.find(query)
 
+
+    #Extract the value of a field within a specified time range
     field_values = []
 
     for document in documents:
@@ -36,24 +42,39 @@ def calculate_statistics(field_name, interval, sensor_type):
                 if field_name in entry:
                     field_values.append(entry[field_name])
 
-
+    # Calculate statistics
     if field_values:
         average_value = mean(field_values)
         highest_value = max(field_values)
         lowest_value = min(field_values)
-        print(f"Average{field_name}（{interval}）: {average_value:.2f}")
-        print(f"Highest{field_name}（{interval}）: {highest_value:.2f}")
-        print(f"Lowest{field_name}（{interval}）: {lowest_value:.2f}")
+        statistics = {
+            "average": round(average_value, 2),
+            "highest": round(highest_value, 2),
+            "lowest": round(lowest_value, 2)
+        }
+        return statistics
     else:
-        print(f"can't find {interval} the {field_name} data")
+        return None
 
-calculate_statistics("temperature", "daily", "DHT")
-calculate_statistics("temperature", "weekly", "DHT")
-calculate_statistics("temperature", "monthly", "DHT")
+# Calculate temperature statistics using "DHT" sensor type
+temperature_daily_stats = calculate_statistics("temperature", "daily", "DHT")
+temperature_weekly_stats = calculate_statistics("temperature", "weekly", "DHT")
+temperature_monthly_stats = calculate_statistics("temperature", "monthly", "DHT")
+
+print("Temperature（Daily）:", temperature_daily_stats)
+print("Temperature（Weekly）:", temperature_weekly_stats)
+print("Temperature（Monthly）:", temperature_monthly_stats)
 print("-------------------------------------------------------")
-calculate_statistics("humidity", "daily", "DHT")
-calculate_statistics("humidity", "weekly", "DHT")
-calculate_statistics("humidity", "monthly", "DHT")
+
+# Calculate humidity statistics using "DHT" sensor type
+humidity_daily_stats = calculate_statistics("humidity", "daily", "DHT")
+humidity_weekly_stats = calculate_statistics("humidity", "weekly", "DHT")
+humidity_monthly_stats = calculate_statistics("humidity", "monthly", "DHT")
+
+print("humidity（Daily）:", humidity_daily_stats)
+print("humidity（Weekly）:", humidity_weekly_stats)
+print("humidity（Monthly）:", humidity_monthly_stats)
+
 
 
 client.close()
