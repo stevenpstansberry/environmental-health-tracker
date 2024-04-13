@@ -9,7 +9,16 @@ db = cluster["sensor_data"]  # space in cloud
 collection = db["data"]  # table
 
 
-cursor = collection.find({})
+# def getDHT():
+#     DHT_data =  collection.find({"DHT"})
+    
+#     return DHT_data
+
+# DHT_data =  collection.find({})
+# print(DHT_data)
+
+
+# cursor = collection.find({})
 
 # Print the data
 # print(list(cursor))

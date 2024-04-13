@@ -32,7 +32,7 @@ def dew_point_calc(temp_c, hum):
     b = 243.12
     gamma = (a * temp_c) / (b + temp_c) + math.log(hum / 100.0)
     dew_point_temperature = (b * gamma) / (a - gamma)
-    return dew_point_temperature
+    return round(dew_point_temperature, 2)
 
 
 """
@@ -67,8 +67,11 @@ def calculate_heat_index(temp_c, hum):
             heat_index += adjustment
 
     heat_index = fahrenheit_to_celsius(heat_index)
-    return heat_index
+    return round(heat_index, 2)
 
+
+def highest_lowest_data(data_name):
+    None
 
 
 
