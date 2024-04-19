@@ -68,8 +68,6 @@ if __name__ == '__main__':
                 # Store data locally
                 store_data_locally(dht_sensor_data,"DHT")
                 
-                #TODO implement upload to mongoDB
-                #upload_to_mongo(dht_sensor_data)
             
             # Print out BME sensor data and store it if it exists
             if bme_sensor_data:
@@ -77,9 +75,10 @@ if __name__ == '__main__':
                 # Store data locally
                 store_data_locally(bme_sensor_data,"BME")
 
-                #TODO implement upload to mongoDB
-                #upload_to_mongo(dht_sensor_data)
 
+
+            #TODO upload here
+            # use sensor_data.json to upload to mongodb 
             
             # Calculate and print the time for the next reading
             next_reading_time = datetime.now() + timedelta(minutes=10)
