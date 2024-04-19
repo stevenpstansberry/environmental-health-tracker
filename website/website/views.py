@@ -1,5 +1,7 @@
 from flask import Blueprint, Flask, jsonify, render_template
 from bson import json_util
+import math
+import website.mongo as mongo
 from website.mongo import db
 import website.calc_data as calc_data
 
@@ -16,7 +18,7 @@ def home():
     return render_template('home.html', data = data)
 
 
-@views.route('/data_table')
+@views.route('/api/data')
 def table():
     data = list(db.test.find({}))  # Convert cursor to list
     print(data)
@@ -39,13 +41,17 @@ def get_data():
 
 @views.route('/dashboard')
 def dashboard():
-    temp = 25.8
-    press = 14.21
-    hum = 40.8
+    data = {}
+
     qlty = 64
-    data = {"timestamp": "2024-04-05 01:07:54", "temp": temp, "press": press, "hum": hum, "qlty": qlty}
-    data['dew_point'] = calc_data.dew_point_calc(temp, hum)
-    data['heat_index'] = calc_data.calculate_heat_index(temp, hum)
+    latest_data = mongo.get_latest_data()
+    data = {"timestamp": latest_data['last_DHT']['timestamp'], 
+            "temp": round(latest_data['last_DHT']['temperature'], 2), 
+            "press": round(latest_data['last_BME']['pressure'], 2), 
+            "hum": round(latest_data['last_DHT']['humidity'], 2), 
+            "qlty": qlty}
+    data['dew_point'] = calc_data.dew_point_calc(latest_data['last_DHT']['temperature'], latest_data['last_DHT']['humidity'])
+    data['heat_index'] = calc_data.calculate_heat_index(latest_data['last_DHT']['temperature'], latest_data['last_DHT']['humidity'])
 
     return render_template('index.html', title="Eco_Health_Tracker", data=data)
 
