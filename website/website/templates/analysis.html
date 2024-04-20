@@ -315,21 +315,73 @@
 
 			<main class="content">
 				<div class="container-fluid p-0">
-
-					<h1 class="h3 mb-3">Blank Page</h1>
-
-					<div class="row">
-						<div class="col-12">
-							<div class="card">
-								<div class="card-header">
-									<h5 class="card-title mb-0">Empty card</h5>
-								</div>
-								<div class="card-body">
+					<div class="col-xl-6 col-xxl-12">
+						<div class="d-flex justify-content-end mb-2">
+						<!-- Horizontal button group -->
+							<div class="btn-group btn-group-sm" role="group" aria-label="Data Name">
+								<button type="button" class="btn btn-secondary active" id="Ave_temperatureBtn">Temperature</button>
+								<button type="button" class="btn btn-secondary" id="Ave_humidityBtn">Humidity</button>
+								<button type="button" class="btn btn-secondary" id="Ave_pressureBtn">Pressure</button>
+								<button type="button" class="btn btn-secondary" id="Ave_airQualityBtn">Air Quality</button>
+							</div>
+						</div>
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-2">Weekly Average Data Line Graph</h5>
+							</div>
+							<div class="card-body py-3">
+								<div class="chart chart-sm">
+									<canvas id="chartjs-AverageData-line"></canvas>
 								</div>
 							</div>
 						</div>
 					</div>
-
+				</div>
+				<div class="container-fluid p-0">
+					<div class="col-xl-6 col-xxl-12">
+						<div class="d-flex justify-content-end mb-2">
+						<!-- Horizontal button group -->
+							<div class="btn-group btn-group-sm" role="group" aria-label="Data Name">
+								<button type="button" class="btn btn-secondary active" id="Hig_temperatureBtn">Temperature</button>
+								<button type="button" class="btn btn-secondary" id="Hig_humidityBtn">Humidity</button>
+								<button type="button" class="btn btn-secondary" id="Hig_pressureBtn">Pressure</button>
+								<button type="button" class="btn btn-secondary" id="Hig_airQualityBtn">Air Quality</button>
+							</div>
+						</div>
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-2">Weekly Highest Data Line Graph</h5>
+							</div>
+							<div class="card-body py-3">
+								<div class="chart chart-sm">
+									<canvas id="chartjs-HighestData-line"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="container-fluid p-0">
+					<div class="col-xl-6 col-xxl-12">
+						<div class="d-flex justify-content-end mb-2">
+						<!-- Horizontal button group -->
+							<div class="btn-group btn-group-sm" role="group" aria-label="Data Name">
+								<button type="button" class="btn btn-secondary active" id="Low_temperatureBtn">Temperature</button>
+								<button type="button" class="btn btn-secondary" id="Low_humidityBtn">Humidity</button>
+								<button type="button" class="btn btn-secondary" id="Low_pressureBtn">Pressure</button>
+								<button type="button" class="btn btn-secondary" id="Low_airQualityBtn">Air Quality</button>
+							</div>
+						</div>
+						<div class="card flex-fill w-100">
+							<div class="card-header">
+								<h5 class="card-title mb-2">Weekly Lowest Data Line Graph</h5>
+							</div>
+							<div class="card-body py-3">
+								<div class="chart chart-sm">
+									<canvas id="chartjs-LowsetData-line"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</main>
 
@@ -364,6 +416,330 @@
 	</div>
 
 	<script src="../static/js/app.js"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var ctx = document.getElementById("chartjs-AverageData-line").getContext("2d");
+			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
+			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
+			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
+
+			// Simulated data for each chart type
+			var chartData = {
+				temperature: [18.9, 19.0, 19.3, 19.7, 19.9, 20.0, 20.2],
+				humidity: [60, 65, 70, 68, 72, 75, 80],
+				pressure: [1010, 1005, 1002, 1012, 1008, 1007, 1015],
+				airQuality: [80, 75, 70, 65, 60, 55, 50]
+			};
+
+			var chartLabels = ["Mon", "Tue", "wed","Thur", "Fri", "Sat", "Sun"];
+
+			// Line chart (default to temperature chart)
+			var lineChart = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: chartLabels,
+					datasets: [{
+						label: "Temperature (°C)",
+						fill: true,
+						backgroundColor: gradient,
+						borderColor: window.theme.primary,
+						data: chartData.temperature
+					}]
+				},
+				options: {
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					tooltips: {
+						intersect: false
+					},
+					hover: {
+						intersect: true
+					},
+					plugins: {
+						filler: {
+							propagate: false
+						}
+					},
+					scales: {
+						xAxes: [{
+							reverse: true,
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								stepSize: 2
+							},
+							display: true,
+							borderDash: [3, 3],
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}]
+					}
+				}
+			});
+
+			// Event listeners for chart type buttons
+			document.getElementById("Ave_temperatureBtn").addEventListener("click", function() {
+				updateChart("temperature", "Temperature (°C)");
+				toggleActiveButton("Ave_temperatureBtn");
+			});
+
+			document.getElementById("Ave_humidityBtn").addEventListener("click", function() {
+				updateChart("humidity", "Humidity (%)");
+				toggleActiveButton("Ave_humidityBtn");
+			});
+
+			document.getElementById("Ave_pressureBtn").addEventListener("click", function() {
+				updateChart("pressure", "Pressure (hPa)");
+				toggleActiveButton("Ave_pressureBtn");
+			});
+
+			document.getElementById("Ave_airQualityBtn").addEventListener("click", function() {
+				updateChart("airQuality", "Air Quality");
+				toggleActiveButton("Ave_airQualityBtn");
+			});
+
+			// Function to update chart data
+			function updateChart(dataType, label) {
+				lineChart.data.datasets[0].label = label;
+				lineChart.data.datasets[0].data = chartData[dataType];
+				lineChart.update();
+			}
+
+			// Function to toggle active button
+			function toggleActiveButton(btnId) {
+				var buttons = document.querySelectorAll(".btn-group button");
+				buttons.forEach(function(btn) {
+					if (btn.id === btnId) {
+						btn.classList.add("active");
+					} else {
+						btn.classList.remove("active");
+					}
+				});
+			}
+		});
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var ctx = document.getElementById("chartjs-HighestData-line").getContext("2d");
+			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
+			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
+			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
+
+			// Simulated data for each chart type
+			var chartData = {
+				temperature: [20.9, 24.0, 25.3, 23.7, 20.9, 18.0, 19.2],
+				humidity: [60, 65, 70, 68, 72, 75, 80],
+				pressure: [1010, 1005, 1002, 1012, 1008, 1007, 1015],
+				airQuality: [80, 75, 70, 65, 60, 55, 50]
+			};
+
+			var chartLabels = ["Mon", "Tue", "wed","Thur", "Fri", "Sat", "Sun"];
+
+			// Line chart (default to temperature chart)
+			var lineChart = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: chartLabels,
+					datasets: [{
+						label: "Temperature (°C)",
+						fill: true,
+						backgroundColor: gradient,
+						borderColor: window.theme.primary,
+						data: chartData.temperature
+					}]
+				},
+				options: {
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					tooltips: {
+						intersect: false
+					},
+					hover: {
+						intersect: true
+					},
+					plugins: {
+						filler: {
+							propagate: false
+						}
+					},
+					scales: {
+						xAxes: [{
+							reverse: true,
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								stepSize: 2
+							},
+							display: true,
+							borderDash: [3, 3],
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}]
+					}
+				}
+			});
+
+			// Event listeners for chart type buttons
+			document.getElementById("Hig_temperatureBtn").addEventListener("click", function() {
+				updateChart("temperature", "Temperature (°C)");
+				toggleActiveButton("Hig_temperatureBtn");
+			});
+
+			document.getElementById("Hig_humidityBtn").addEventListener("click", function() {
+				updateChart("humidity", "Humidity (%)");
+				toggleActiveButton("Hig_humidityBtn");
+			});
+
+			document.getElementById("Hig_pressureBtn").addEventListener("click", function() {
+				updateChart("pressure", "Pressure (hPa)");
+				toggleActiveButton("Hig_pressureBtn");
+			});
+
+			document.getElementById("Hig_airQualityBtn").addEventListener("click", function() {
+				updateChart("airQuality", "Air Quality");
+				toggleActiveButton("Hig_airQualityBtn");
+			});
+
+			// Function to update chart data
+			function updateChart(dataType, label) {
+				lineChart.data.datasets[0].label = label;
+				lineChart.data.datasets[0].data = chartData[dataType];
+				lineChart.update();
+			}
+
+			// Function to toggle active button
+			function toggleActiveButton(btnId) {
+				var buttons = document.querySelectorAll(".btn-group button");
+				buttons.forEach(function(btn) {
+					if (btn.id === btnId) {
+						btn.classList.add("active");
+					} else {
+						btn.classList.remove("active");
+					}
+				});
+			}
+		});
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var ctx = document.getElementById("chartjs-LowsetData-line").getContext("2d");
+			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
+			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
+			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
+
+			// Simulated data for each chart type
+			var chartData = {
+				temperature: [15.9, 14.0, 13.3, 12.7, 10.9, 9.0, 8.2],
+				humidity: [60, 65, 70, 68, 72, 75, 80],
+				pressure: [1010, 1005, 1002, 1012, 1008, 1007, 1015],
+				airQuality: [80, 75, 70, 65, 60, 55, 50]
+			};
+
+			var chartLabels = ["Mon", "Tue", "wed","Thur", "Fri", "Sat", "Sun"];
+
+			// Line chart (default to temperature chart)
+			var lineChart = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: chartLabels,
+					datasets: [{
+						label: "Temperature (°C)",
+						fill: true,
+						backgroundColor: gradient,
+						borderColor: window.theme.primary,
+						data: chartData.temperature
+					}]
+				},
+				options: {
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					tooltips: {
+						intersect: false
+					},
+					hover: {
+						intersect: true
+					},
+					plugins: {
+						filler: {
+							propagate: false
+						}
+					},
+					scales: {
+						xAxes: [{
+							reverse: true,
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								stepSize: 2
+							},
+							display: true,
+							borderDash: [3, 3],
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}]
+					}
+				}
+			});
+
+			// Event listeners for chart type buttons
+			document.getElementById("Low_temperatureBtn").addEventListener("click", function() {
+				updateChart("temperature", "Temperature (°C)");
+				toggleActiveButton("Low_temperatureBtn");
+			});
+
+			document.getElementById("Low_humidityBtn").addEventListener("click", function() {
+				updateChart("humidity", "Humidity (%)");
+				toggleActiveButton("Low_humidityBtn");
+			});
+
+			document.getElementById("Low_pressureBtn").addEventListener("click", function() {
+				updateChart("pressure", "Pressure (hPa)");
+				toggleActiveButton("Low_pressureBtn");
+			});
+
+			document.getElementById("Low_airQualityBtn").addEventListener("click", function() {
+				updateChart("airQuality", "Air Quality");
+				toggleActiveButton("Low_airQualityBtn");
+			});
+
+			// Function to update chart data
+			function updateChart(dataType, label) {
+				lineChart.data.datasets[0].label = label;
+				lineChart.data.datasets[0].data = chartData[dataType];
+				lineChart.update();
+			}
+
+			// Function to toggle active button
+			function toggleActiveButton(btnId) {
+				var buttons = document.querySelectorAll(".btn-group button");
+				buttons.forEach(function(btn) {
+					if (btn.id === btnId) {
+						btn.classList.add("active");
+					} else {
+						btn.classList.remove("active");
+					}
+				});
+			}
+		});
+	</script>
 
 </body>
 
