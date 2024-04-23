@@ -70,9 +70,6 @@ def calculate_heat_index(temp_c, hum):
     return round(heat_index, 2)
 
 
-def highest_lowest_data(data_name):
-    None
-
 
 
 

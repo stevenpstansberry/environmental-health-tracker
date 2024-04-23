@@ -9,22 +9,22 @@ db = cluster["sensor_data"]  # space in cloud
 collection = db["data"]  # table
 
 """
-Get the latest DHT and BME data 
-Returns: result_dict(dict) - all latest data from DHT and BME
+Get the latest update DHT and BME data 
+Returns: result_dict(dict) - key: sensor type, all latest update data from DHT and BME
 """
 def get_latest_data():
     pipeline = [
         {
             "$addFields": {
-                "last_DHT": { "$last": "$DHT" },
-                "last_BME": { "$last": "$BME" }
+                "DHT": { "$last": "$DHT" },
+                "BME": { "$last": "$BME" }
             }
         },
         {
             "$project": {
                 "_id": 0,  # exclude _id field
-                "last_DHT": 1,
-                "last_BME": 1
+                "DHT": 1,
+                "BME": 1
             }
         }
     ]
@@ -42,11 +42,11 @@ def get_latest_data():
 
 """
 Get the DHT and BME data on the latest day
-Returns: sensor_data(dict) - all DHT and BME data on the latest day
+Returns: sensor_data(dict) - key: sensor type, all DHT and BME data on the latest day
 """
-def get_sensor_data_on_date():
+def get_latest_day_sensor_data():
     last_data = get_latest_data()
-    last_timestamp = last_data["last_DHT"]["timestamp"].split()[0]
+    last_timestamp = last_data["DHT"]["timestamp"].split()[0]
     print(last_timestamp)
     start_date = datetime.strptime(last_timestamp, "%Y-%m-%d")
     end_date = start_date + timedelta(days=1)
@@ -107,7 +107,27 @@ def get_sensor_data_on_date():
     print(sensor_data)
     return sensor_data
 
-get_latest_data()
+"""
+Get the DHT and BME data on the latest day for chart use
+Returns: chart_data(dict) - key: type of data, all DHT and BME data on the latest day
+"""
+def latest_day_chart_data():
+    daily_data = get_latest_day_sensor_data()
+    chart_data = {'temp': [], 'hum': [], 'press': []}
+
+    for d in daily_data['DHT']:
+        chart_data['temp'].append(d['temperature'])
+        chart_data['hum'].append(d['humidity'])
+
+    for d in daily_data['BME']:
+        chart_data['press'].append(d['pressure'])
+
+
+    print(chart_data)
+    return chart_data
+
+
+
 ####
 
 # cursor = collection.find({})
