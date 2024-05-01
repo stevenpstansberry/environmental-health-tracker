@@ -126,282 +126,123 @@ def latest_day_chart_data():
     print(chart_data)
     return chart_data
 
-"""""
-Get the DHT and BME data every day on last week
-Returns: result_dict(dict) - key: sensor type, all daily data from DHT and BME
-"""""
-def calculate_last_week_avg_data():
-    # Get the current date and current day of the week (Monday is 0, Sunday is 6)
-    today = datetime.today()
-    current_weekday = today.weekday()
-
-    # Calculate the dates of last Monday and last Sunday
-    last_monday = today - timedelta(days=current_weekday + 7)
+def get_last_week_date_range():
+    today = datetime.now()
+    # The date of last Monday
+    last_monday = today - timedelta(days=today.weekday() + 7)
+    # The date of last Sunday
     last_sunday = last_monday + timedelta(days=6)
+    last_week_ranges = []
+    # Calculate the date range for each day of last week using a loop
+    for i in range(7):
+        # Date of a certain day of last week
+        day = last_monday + timedelta(days=i)
+        # Start time of that day (00:00)
+        start_date = datetime(day.year, day.month, day.day, 0, 0)
+        # End time of that day (23:59)
+        end_date = datetime(day.year, day.month, day.day, 23, 59)
+        # Append the range to the list
+        last_week_ranges.append((start_date, end_date))
+    return last_week_ranges
 
-    # Define the MongoDB aggregation pipeline, filter out the data from last Monday to Sunday, 
-    #group it by date, and calculate the average data for each day
+def get_weekly_sensor_data(start_date, end_date):
+    # MongoDB aggregation pipeline to filter data based on timestamp
     pipeline = [
         {
-            '$match': {
-                'timestamp': {
-                    '$gte': last_monday,
-                    '$lte': last_sunday
+            "$match": {
+                "timestamp": {
+                    "$gte": start_date,
+                    "$lte": end_date
                 }
             }
         },
         {
-            '$group': {
-                '_id': {
-                    '$dateToString': {
-                        'format': '%Y-%m-%d',
-                        'date': '$timestamp'
-                    }
-                },
-                'avg_temperature': {
-                    '$avg': '$DHT.temperature'  # Calculate the average temperature
-                },
-                'avg_humidity': {
-                    '$avg': '$DHT.humidity'  # Calculate the average humidity
-                },
-                'avg_pressure':{
-                    '$avg': '$DME.pressure' # Calculate the average pressure
-                },
-
-                # it can continue to add average calculations for other fields
+            "$project": {
+                "_id": 0,
+                "DHT": 1,
+                "BME": 1
             }
         }
     ]
+    # Execute the pipeline and retrieve data
+    result = collection.aggregate(pipeline)
+    sensor_data = {"DHT": [], "BME": []}
+    # Process the retrieved data
+    for doc in result:
+        if 'DHT' in doc:
+            sensor_data['DHT'].extend(doc['DHT'])
+        if 'BME' in doc:
+            sensor_data['BME'].extend(doc['BME'])
+    return sensor_data
 
-    #Execute aggregate query
-    result = list(collection.aggregate(pipeline))
+def calculate_daily_averages(sensor_data):
+    # Group data by date and calculate averages
+    daily_averages = {}
+    # Initialize structure for daily averages
+    for sensor_type in sensor_data:
+        daily_averages[sensor_type] = {}
 
-    # Store the calculation results in a dictionary 
-    #where the keys are date strings and the values ​​are dictionaries containing average data
-    week_avg_data = {}
-    for entry in result:
-        date_str = entry['_id']
-        avg_temp = entry['avg_temperature']
-        avg_humidity = entry['avg_humidity']
-        avg_pressure = entry['avg_pressure']
-        # it can continue to add other fields.
-
-        week_avg_data[date_str] = {
-            'avg_temperature': avg_temp,
-            'avg_humidity': avg_humidity,
-            'avg_pressure': avg_pressure
-            # it can continue to add other fields.
-        }
-    print(week_avg_data)
-    return week_avg_data
-
-"""
-Dew point temperature is calculated based on temperature (Celsius) and relative humidity.
-Use the Magnus-Tetens formula for approximate calculations.
-"""
-def calculate_dew_point(temperature, humidity):
-    temp_celsius = temperature
-    rh = humidity / 100.0 # Convert relative humidity from percentage to decimal
-
-# Constants for the Magnus-Tetens formula
-    a = 17.27
-    b = 237.7
-
-# Calculate intermediate value (gamma) for Dew Point calculation
-    gamma = (a * temp_celsius) / (b + temp_celsius) + log(rh)
-
-# Calculate Dew Point temperature (in Celsius)
-    dew_point = (b * gamma) / (a - gamma)
-    return dew_point
-
-def calculate_last_week_avg_data_dew_points():
-# Get the current date and current day of the week (Monday is 0, Sunday is 6)
-    today = datetime.today()
-    current_weekday = today.weekday()   
-    # Calculate the dates of last Monday and last Sunday
-    last_monday = today - timedelta(days=current_weekday + 7)
-    last_sunday = last_monday + timedelta(days=6)
-
-    # Define MongoDB aggregation pipeline
-    pipeline = [
-        {
-            '$match': {
-                'timestamp': {
-                    '$gte': last_monday,
-                    '$lte': last_sunday
+    for sensor_type, readings in sensor_data.items():
+        for reading in readings:
+            date_key = reading['timestamp'].strftime("%Y-%m-%d")
+            if date_key not in daily_averages[sensor_type]:
+                daily_averages[sensor_type][date_key] = {
+                    'temperature': [],
+                    'humidity': [],
+                    'pressure': [],
                 }
-            }
-        },
-        {
-            '$group': {
-                '_id': {
-                    '$dateToString': {
-                        'format': '%Y-%m-%d',
-                        'date': '$timestamp'
-                    }
-                },
-                'avg_temperature': {
-                    '$avg': '$DME.temperature'  # Calculate the average temperature
-                },
-                'avg_pressure': {
-                    '$avg': '$DME.pressure' # Calculate the average pressure
+            daily_averages[sensor_type][date_key]['temperature'].append(reading['temperature'])
+            daily_averages[sensor_type][date_key]['humidity'].append(reading['humidity'])
+            if 'pressure' in reading:
+                daily_averages[sensor_type][date_key]['pressure'].append(reading['pressure'])
 
-                }
-            }
-        }
-    ]
+    for sensor_type, dates in daily_averages.items():
+        for date, sensors in dates.items():
+            for key in sensors:
+                sensors[key] = sum(sensors[key]) / len(sensors[key]) if sensors[key] else None
 
-    #Execute aggregate query
-    result = list(collection.aggregate(pipeline))
+    return daily_averages
 
-    # Collect daily dew point temperature data
-    week_dew_points = {}
-    for entry in result:
-        date_str = entry['_id']
-        avg_temp = entry['avg_temperature']
-        avg_pressure = entry['avg_pressure']
+def convert_weekly_chart_data(daily_averages):
+    chart_data = {'temperature': [], 'humidity': [], 'pressure': [], 'timestamp': []}
+    for sensor_type, dates in daily_averages.items():
+        for date, data in dates.items():
+            if 'temperature' in data:
+                chart_data['temperature'].append({'date': date, 'value': data['temperature']})
+            if 'humidity' in data:
+                chart_data['humidity'].append({'date': date, 'value': data['humidity']})
+            if 'pressure' in data:
+                chart_data['pressure'].append({'date': date, 'value': data['pressure']})
+            chart_data['timestamp'].append(date)
 
-        # Calculate dew point temperature based on daily average temperature and air pressure
-        dew_point = calculate_dew_point(avg_temp, avg_pressure)
-
-        # Store data in dictionary
-        week_dew_points[date_str] = dew_point
-
-    return week_dew_points
-
-def calculate_heat_index(temperature, humidity):
-    """
-    Heat Index is calculated based on temperature (Celsius) and relative humidity.
-    Use the formula provided by the National Weather Service (NWS)
-    """
-    temp_fahrenheit = (temperature * 9/5) + 32
-    heat_index = (
-        -42.379 +
-        (2.04901523 * temp_fahrenheit) +
-        (10.14333127 * humidity) -
-        (0.22475541 * temp_fahrenheit * humidity) -
-        (6.83783e-3 * temp_fahrenheit**2) -
-        (5.481717e-2 * humidity**2) +
-        (1.22874e-3 * temp_fahrenheit**2 * humidity) +
-        (8.5282e-4 * temp_fahrenheit * humidity**2) -
-        (1.99e-6 * temp_fahrenheit**2 * humidity**2)
-    )
-
-    return heat_index
-
-
-
-"""
-Heat Index is calculated based on temperature (Celsius) and relative humidity.
-Use the formula provided by the National Weather Service (NWS).
-"""
-def calculate_last_week_avg_data_heat_indexes():
-    today = datetime.today()
-    current_weekday = today.weekday()
-
-    # Calculate the dates of last Monday and last Sunday
-    last_monday = today - timedelta(days=current_weekday + 7)
-    last_sunday = last_monday + timedelta(days=6)
-
-    # Define MongoDB aggregation pipeline
-    pipeline = [
-        {
-            '$match': {
-                'timestamp': {
-                    '$gte': last_monday,
-                    '$lte': last_sunday
-                }
-            }
-        },
-        {
-            '$group': {
-                '_id': {
-                    '$dateToString': {
-                        'format': '%Y-%m-%d',
-                        'date': '$timestamp'
-                    }
-                },
-                'avg_temperature': {
-                    '$avg': '$DHT.temperature'  # Calculate the average temperature
-                },
-                'avg_humidity': {
-                   '$avg': '$DHT.humidity'  # Calculate the average humidity
-                }
-            }
-        }
-    ]
-
-    #Execute aggregate query
-    result = list(collection.aggregate(pipeline))
-
-    # Collect daily Heat Index data
-    week_heat_indexes = {}
-    for entry in result:
-        date_str = entry['_id']
-        avg_temp = entry['avg_temperature']
-        avg_humidity = entry['avg_humidity']
-
-        # Calculate Heat Index based on daily average temperature and humidity
-        heat_index = calculate_heat_index(avg_temp, avg_humidity)
-
-       # Store data in dictionary
-        week_heat_indexes[date_str] = heat_index
-
-    return week_heat_indexes   
-def calculate_last_week_avg_data_with_chart_data():
-    # Calculate last week's average data
-    week_avg_data = calculate_last_week_avg_data()
-
-    # Prepare chart data structure
-    chart_data = {'temp': [], 'hum': [], 'press': []}
-
-    # Process each day's data
-    for date_str, avg_data in week_avg_data.items():
-        # Append temperature and humidity to chart data
-        if 'avg_temperature' in avg_data:
-            chart_data['temp'].append(avg_data['avg_temperature'])
-        if 'avg_humidity' in avg_data:
-            chart_data['hum'].append(avg_data['avg_humidity'])
-        if 'avg_pressure' in avg_data:
-            chart_data['press'].append(avg_data['avg_pressure'])
-
-    # Print or return chart data
-    print(chart_data)
     return chart_data
 
-def calculate_last_week_avg_data_dew_points_with_chart_data():
-    # Calculate last week's average dew point data
-    week_dew_points = calculate_last_week_avg_data_dew_points()
+# Example Usage
 
-    # Prepare chart data structure
-    chart_data = {'dew_point': []}
+# Call the functions in the main program and print the data
+if __name__ == "__main__":
+    # Get the date range of the last week
+    last_week_ranges = get_last_week_date_range()
+    print("Last Week Date Ranges:")
+    for i, (start_date, end_date) in enumerate(last_week_ranges):
+        print(f"Day {i+1}:")
+        print("Start Date:", start_date)
+        print("End Date:", end_date)
+        print()
 
-    # Process each day's data
-    for date_str, dew_point in week_dew_points.items():
-        # Append dew point to chart data
-        chart_data['dew_point'].append(dew_point)
+    # Get sensor data for each day from last Monday to last Sunday
+    for i, (start_date, end_date) in enumerate(last_week_ranges):
+        print(f"Sensor Data for Day {i+1}:")
+        sensor_data = get_weekly_sensor_data(start_date, end_date)
+        print(sensor_data)
 
-    # Print or return chart data
-    print(chart_data)
-    return chart_data
-
-
-def calculate_last_week_avg_data_heat_indexes_with_chart_data():
-    # Calculate last week's average heat index data
-    week_heat_indexes = calculate_last_week_avg_data_heat_indexes()
-
-    # Prepare chart data structure
-    chart_data = {'heat_index': []}
-
-    # Process each day's data
-    for date_str, heat_index in week_heat_indexes.items():
-        # Append heat index to chart data
-        chart_data['heat_index'].append(heat_index)
-
-    # Print or return chart data
-    print(chart_data)
-    return chart_data
-
+    # Calculate daily averages for each day
+    for i, (start_date, end_date) in enumerate(last_week_ranges):
+        print(f"Daily Averages for Day {i+1}:")
+        sensor_data = get_weekly_sensor_data(start_date, end_date)
+        daily_averages = calculate_daily_averages(sensor_data)
+        chart_data = convert_weekly_chart_data(daily_averages)
+        print(chart_data)
 
 
 ####
