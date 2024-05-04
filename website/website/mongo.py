@@ -2,7 +2,7 @@ import json
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import os
-
+from math import log
 
 # Connect to MongoDB cluster
 cluster = MongoClient("mongodb+srv://maryiasakharava:SensorDataPassword@sensordata.pjdhs9k.mongodb.net/?retryWrites=true&w=majority&appName=SensorData")

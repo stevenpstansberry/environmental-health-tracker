@@ -80,12 +80,12 @@ def analysis():
             'heat_index' : [21.1, 18.2, 23.3, 16.4, 25.5, 20.6, 27.7]
         },
         "2024-04-07": {
-        'temperature': [19.0, 21.5, 18.0, 23.0, 16.8, 25.3, 14.7], 
-        'humidity': [30.2, 35.4, 28.8, 33.7, 36.2, 31.9, 37.0], 
-        'pressure': [1015.5, 1013.4, 1016.1, 1014.5, 1012.7, 1017.2, 1013.1], 
-        'air_quality': [11,10,13,14,10,12,9], 
-        'dew_point': [10.1, 11.6, 9.7, 12.5, 8.9, 13.3, 7.8], 
-        'heat_index': [18.5, 21.0, 17.6, 22.4, 16.0, 24.9, 14.1]
+            'temperature': [19.0, 21.5, 18.0, 23.0, 16.8, 25.3, 14.7], 
+            'humidity': [30.2, 35.4, 28.8, 33.7, 36.2, 31.9, 37.0], 
+            'pressure': [1015.5, 1013.4, 1016.1, 1014.5, 1012.7, 1017.2, 1013.1], 
+            'air_quality': [11,10,13,14,10,12,9], 
+            'dew_point': [10.1, 11.6, 9.7, 12.5, 8.9, 13.3, 7.8], 
+            'heat_index': [18.5, 21.0, 17.6, 22.4, 16.0, 24.9, 14.1]
         },
         "2024-04-14": {
             'temperature': [20.5, 22.8, 19.9, 25.1, 17.4, 27.3, 15.5],
@@ -139,7 +139,7 @@ def analysis():
         }
     }
     
-    return render_template('analysis.html', title="Analysis", week_avg_data=week_avg_data, week_high_data=week_high_data, week_low_data=week_low_data )
+    return render_template('analysis.html', title="Analysis", week_avg_data=week_avg_data, week_high_data=week_high_data, week_low_data=week_low_data)
 
 
 @views.route('/sign_in')

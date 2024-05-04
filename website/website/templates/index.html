@@ -402,138 +402,6 @@
 
 	<script src="../static/js/app.js"></script>
 
-	<!-- <script>
-		var latest_day_data = JSON.parse('{{ latest_day_data | tojson | safe }}');
-		// console.log(latest_day_data);
-		var chartData = latest_day_data;
-		document.addEventListener("DOMContentLoaded", function() {
-			var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
-			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
-			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
-			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
-
-			
-			var chartLabels = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM"];
-
-			// Line chart (default to temperature chart)
-			var lineChart = new Chart(ctx, {
-				type: "line",
-				data: {
-					labels: chartLabels,
-					datasets: [{
-						label: "Temperature (°C)",
-						fill: true,
-						backgroundColor: gradient,
-						borderColor: window.theme.primary,
-						data: chartData.temperature
-					}]
-				},
-				options: {
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					tooltips: {
-						intersect: false
-					},
-					hover: {
-						intersect: true
-					},
-					plugins: {
-						filler: {
-							propagate: false
-						}
-					},
-					scales: {
-						xAxes: [{
-							reverse: true,
-							gridLines: {
-								color: "rgba(0,0,0,0.0)"
-							}
-						}],
-						yAxes: [{
-							ticks: {
-								stepSize: 2
-							},
-							display: true,
-							borderDash: [3, 3],
-							gridLines: {
-								color: "rgba(0,0,0,0.0)"
-							}
-						}]
-					}
-				}
-			});
-			// Update Highest and Lowest sections with default temperature values
-			updateHighestLowest("temperature");
-
-			// Event listeners for chart type buttons
-			document.getElementById("temperatureBtn").addEventListener("click", function() {
-				updateChart("temperature", "Temperature (°C)");
-				updateHighestLowest("temperature");
-				toggleActiveButton("temperatureBtn");
-			});
-
-			document.getElementById("humidityBtn").addEventListener("click", function() {
-				updateChart("humidity", "Humidity (%)");
-				updateHighestLowest("humidity");
-				toggleActiveButton("humidityBtn");
-			});
-
-			document.getElementById("pressureBtn").addEventListener("click", function() {
-				updateChart("pressure", "Pressure (hPa)");
-				updateHighestLowest("pressure");
-				toggleActiveButton("pressureBtn");
-			});
-
-			document.getElementById("airQualityBtn").addEventListener("click", function() {
-				updateChart("airQuality", "Air Quality");
-				updateHighestLowest("airQuality");
-				toggleActiveButton("airQualityBtn");
-			});
-
-			// Function to update chart data
-			function updateChart(dataType, label) {
-				lineChart.data.datasets[0].label = label;
-				lineChart.data.datasets[0].data = chartData[dataType];
-				lineChart.update();
-			}
-
-			// Function to update highest and lowest values
-			function updateHighestLowest(dataType) {
-				var highest = Math.max.apply(null, chartData[dataType]).toFixed(2);
-				var lowest = Math.min.apply(null, chartData[dataType]).toFixed(2);
-				if (dataType == "temperature") {
-					highest = highest + "&deg;C";
-					lowest = lowest + "&deg;C";
-				} else if (dataType == "humidity") {
-					highest = highest + "%";
-					lowest = lowest + "%";
-				} else if (dataType == "pressure") {
-					highest = highest + "hPa";
-					lowest = lowest + "hPa";
-				} else if (dataType == "airQuality") {
-					highest = highest + "ppm";
-					lowest = lowest + "ppm";
-				}
-				document.getElementById("highestValue").innerHTML = highest;
-				document.getElementById("lowestValue").innerHTML = lowest;
-			}
-
-			// Function to toggle active button
-			function toggleActiveButton(btnId) {
-				var buttons = document.querySelectorAll(".btn-group button");
-				buttons.forEach(function(btn) {
-					if (btn.id === btnId) {
-						btn.classList.add("active");
-					} else {
-						btn.classList.remove("active");
-					}
-				});
-			}
-		});
-	</script> -->
-
 	<script>
 		function initMaps() {
 			var hybridMap = {
@@ -618,7 +486,7 @@
 				document.getElementById("heatIndexValue").textContent = newData.heat_index;
 
 				chartData = newDayData;
-				console.log(chartData);
+
 				lineChart.data.datasets[0].data = chartData[currentDataType];
 
 				var labels = [];
@@ -635,7 +503,7 @@
 					// Add "12AM" to the labels
 					labels.push("12AM");
 				};
-				console.log(labels);
+
 				lineChart.data.labels = labels;
 				lineChart.update();
 				updateHighestLowest(currentDataType);
