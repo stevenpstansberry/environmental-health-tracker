@@ -4,9 +4,11 @@ from datetime import datetime, timedelta
 import os
 
 
-cluster = MongoClient("mongodb+srv://Viewer:1234@sensordata.1v3p4ie.mongodb.net/?retryWrites=true&w=majority")
-db = cluster["sensor_data"]  # space in cloud
-collection = db["data"]  # table
+# Connect to MongoDB cluster
+cluster = MongoClient("mongodb+srv://maryiasakharava:SensorDataPassword@sensordata.pjdhs9k.mongodb.net/?retryWrites=true&w=majority&appName=SensorData")
+db = cluster["sensor_data"]
+collection = db["test_data"]
+
 
 """
 Get the latest update DHT and BME data 
@@ -36,23 +38,21 @@ def get_latest_data():
         for key, value in doc.items():
             result_dict[key] = value
     
-    print(result_dict)
+    # print(result_dict)
     return result_dict
 
 
 """
-Get the DHT and BME data on the latest day
-Returns: sensor_data(dict) - key: sensor type, all DHT and BME data on the latest day
+Get all the DHT and BME data on the input day
+Args: date(str) - "yyyy-mm-dd", The date on which you want to get the sensor_data
+Returns: sensor_data(dict) - key: sensor type, all DHT and BME data on the day
+    {'DHT': [{'temperature': , 'humidity': , 'timestamp': }, ...], 
+     'BME': [{'temperature': , 'humidity': , 'pressure': , 'timestamp': }, ...]}
 """
-def get_latest_day_sensor_data():
-    last_data = get_latest_data()
-    last_timestamp = last_data["DHT"]["timestamp"].split()[0]
-    print(last_timestamp)
-    start_date = datetime.strptime(last_timestamp, "%Y-%m-%d")
+def get_day_sensor_data(date):
+    start_date = datetime.strptime(date, "%Y-%m-%d")
     end_date = start_date + timedelta(days=1)
     # end_date -= timedelta(seconds=1)
-    # print(start_date)
-    # print(end_date)
 
     pipeline = [
         {
@@ -104,40 +104,78 @@ def get_latest_day_sensor_data():
     for doc in result:
         for key, value in doc.items():
             sensor_data[key] = value
-    print(sensor_data)
+
+    # print(sensor_data)
     return sensor_data
 
+
 """
-Get the DHT and BME data on the latest day for chart use
-Returns: chart_data(dict) - key: type of data, all DHT and BME data on the latest day
+Convert all the data seperate by sensor to seperate by type of data for chart use
+Args: day_sensor_data(dict) - data seperate by sensor
+    {'DHT': [{'temperature': , 'humidity': , 'timestamp': }, ...], 
+     'BME': [{'temperature': , 'humidity': , 'pressure': , 'timestamp': }, ...]}
+Returns: chart_data(dict) - key: type of data, all data on the day
+    {'temperature': [], 'humidity': [], 'pressure': [], 'timestamp': []}
 """
-def latest_day_chart_data():
-    daily_data = get_latest_day_sensor_data()
-    chart_data = {'temp': [], 'hum': [], 'press': []}
+def convert_day_chart_data(day_sensor_data):
+    chart_data = {'temperature': [], 'humidity': [], 'pressure': [], 'timestamp': []}
 
-    for d in daily_data['DHT']:
-        chart_data['temp'].append(d['temperature'])
-        chart_data['hum'].append(d['humidity'])
+    for d in day_sensor_data['DHT']:
+        chart_data['temperature'].append(d['temperature'])
+        chart_data['humidity'].append(d['humidity'])
+        chart_data['timestamp'].append(d['timestamp'])
 
-    for d in daily_data['BME']:
-        chart_data['press'].append(d['pressure'])
+    for d in day_sensor_data['BME']:
+        chart_data['pressure'].append(d['pressure'])
 
 
-    print(chart_data)
+    # print(chart_data)
     return chart_data
+
+"""
+Get all the DHT and BME data at the time
+Args: timestamp - "yyyy-mm-dd hh:mm:ss"
+Returns: data_dict(dict) - key: sensor type, all DHT and BME data at the time
+    {'DHT': {'temperature': , 'humidity': , 'timestamp': }, 
+     'BME': {'temperature': , 'humidity': , 'pressure': , 'timestamp': }}
+"""
+def get_data_by_timestamp(timestamp):    
+    # Query MongoDB for documents with the specified timestamp
+    query = {"$or": [{"DHT.timestamp": timestamp}, {"BME.timestamp": timestamp}]}
+    result = collection.find_one(query)
+    
+    # Extract DHT and BME data
+    dht_data = next((d for d in result.get("DHT", []) if d["timestamp"] == timestamp), None)
+    bme_data = next((d for d in result.get("BME", []) if d["timestamp"] == timestamp), None)
+    
+    # Check if both DHT and BME data are found
+    if dht_data is None or bme_data is None:
+        return None
+    
+    # Format the data
+    data_dict = {
+        "DHT": {
+            "temperature": dht_data["temperature"],
+            "humidity": dht_data["humidity"],
+            "timestamp": dht_data["timestamp"]
+        },
+        "BME": {
+            "temperature": bme_data["temperature"],
+            "humidity": bme_data["humidity"],
+            "pressure": bme_data["pressure"],
+            "timestamp": bme_data["timestamp"]
+        }
+    }
+    
+    return data_dict
 
 
 
 ####
-
 # cursor = collection.find({})
-
-# # Print the data
-# print(list(cursor))
 
 # for document in cursor:
 #     print(document)
-
 
 
 # Close the MongoDB connection
