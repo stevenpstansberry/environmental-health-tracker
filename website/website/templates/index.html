@@ -488,23 +488,13 @@
 				chartData = newDayData;
 
 				lineChart.data.datasets[0].data = chartData[currentDataType];
-
-				var labels = [];
-				chartData.timestamp.forEach(function(timestamp, index) {
-					var hour = new Date(timestamp).getHours();
-					var label = hour === 0 ? "12AM" : (hour < 12 ? hour + "AM" : (hour === 12 ? "12PM" : (hour - 12) + "PM"));
-					if (!labels.includes(label)) {
-						labels.push(label);
-					}
+				
+				// Update labels
+				var labels = chartData.timestamp.map(function(timestamp) {
+					return timestamp.split(' ')[1];
 				});
-				// Check if the last timestamp falls between 11PM and 12AM
-				var lastHour = new Date(chartData.timestamp[chartData.timestamp.length - 1]).getHours();
-				if (lastHour === 23) {
-					// Add "12AM" to the labels
-					labels.push("12AM");
-				};
-
 				lineChart.data.labels = labels;
+
 				lineChart.update();
 				updateHighestLowest(currentDataType);
 			}
@@ -555,10 +545,22 @@
 					},
 					scales: {
 						xAxes: [{
+							type: 'time',
+							time: {
+								parser: 'HH:mm',
+								unit: 'minute',
+								stepSize: 30,
+								displayFormats: {
+									minute: 'HH:mm'
+								}								
+							},
+							ticks:{
+								min: '00:00'
+							},
 							reverse: true,
 							gridLines: {
 								color: "rgba(0,0,0,0.0)"
-							}
+							},
 						}],
 						yAxes: [{
 							ticks: {
@@ -598,7 +600,7 @@
 				toggleActiveButton("airQualityBtn");
 			});
 
-			setInterval(fetchData, 15 * 60 * 1000); // 15 min
+			setInterval(fetchData, 5 * 60 * 1000); // update every 5 min
 		});
 	</script>
 	
