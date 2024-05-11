@@ -6,13 +6,15 @@ from math import log
 
 # Connect to MongoDB cluster
 cluster = MongoClient("mongodb+srv://maryiasakharava:SensorDataPassword@sensordata.pjdhs9k.mongodb.net/?retryWrites=true&w=majority&appName=SensorData")
-db = cluster["sensor_data"]
-collection = db["test_data"]
+db = cluster["EcoHealthTracking"]
+collection = db["sensor_data"]
 
 
 """
 Get the latest update DHT and BME data 
 Returns: result_dict(dict) - key: sensor type, all latest update data from DHT and BME
+    {'DHT': {'temperature': , 'humidity': , 'timestamp': },
+     'BME': {'temperature': , 'humidity': , 'pressure': , 'timestamp': }}
 """
 def get_latest_data():
     pipeline = [
@@ -170,7 +172,6 @@ def get_data_by_timestamp(timestamp):
     return data_dict
 
 
-
 ####
 # cursor = collection.find({})
 
@@ -180,4 +181,3 @@ def get_data_by_timestamp(timestamp):
 
 # Close the MongoDB connection
 # cluster.close()
-
