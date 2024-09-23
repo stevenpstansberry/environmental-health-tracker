@@ -1,4 +1,4 @@
-# CMPE-195-Environmental-Health-Tracker
+# Environmental-Health-Tracker
 
 Environmental Health Tracker is a web application that monitors and visualizes environmental data from sensors. It provides a user-friendly interface to view real-time and historical data on temperature, humidity, pressure, air quality, dew point, and heat index. The data is sourced from a Raspberry Pi connected to a suite of sensors that read in from the local environment. The data is updated every ten minutes, providing a near live assessment of local meterological conditions
 
