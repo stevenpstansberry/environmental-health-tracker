@@ -1,2 +1,3 @@
 .DS_Store
 sensors/old-driver.py
+.env
