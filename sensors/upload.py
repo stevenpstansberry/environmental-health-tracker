@@ -1,9 +1,19 @@
 from pymongo import MongoClient
 import json
 from pymongo.errors import ServerSelectionTimeoutError
+from dotenv import load_dotenv
+import os
 
-def upload_json_to_mongo(json_file, uri):
+# Load environment variables from .env file
+load_dotenv()
+
+def upload_json_to_mongo(json_file):
     try:
+        # Get MongoDB URI from environment variables
+        uri = os.getenv("MONGO_URI")
+        if not uri:
+            raise ValueError("MONGO_URI is not set in .env file")
+
         # Establish a connection to the MongoDB server
         client = MongoClient(uri, serverSelectionTimeoutMS=5000)  # Adjust timeout as needed
 
@@ -34,10 +44,11 @@ def upload_json_to_mongo(json_file, uri):
 
     except ServerSelectionTimeoutError:
         print("Server selection timeout error: Unable to connect to the MongoDB server.")
-
+    except ValueError as e:
+        print(e)
     finally:
         # Close the connection
         client.close()
 
 # Call the function to upload the data
-upload_json_to_mongo('sample_sensor_data.json', uri='mongodb+srv://maryiasakharava:SensorDataPassword@sensordata.pjdhs9k.mongodb.net/?retryWrites=true&w=majority&appName=SensorData')
+upload_json_to_mongo('sample_sensor_data.json')
